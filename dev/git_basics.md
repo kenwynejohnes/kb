@@ -14,8 +14,15 @@ git branch
 git diff
 # If you created a branch locally, in order to push the changes to the server, you have to:
 git push --set-upstream origin fix-misprint
+# Pull the changes from other devs
+git pull
+# Switch to other branch
+git checkout -b <branch>
+
+For other git commands and features refer to the articles below.
 
 
 
 Source:
 https://habr.com/en/companies/yandex_praktikum/articles/700708/ 
+https://habr.com/en/companies/yandex_praktikum/articles/728302/ 
