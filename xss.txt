@@ -1,10 +1,4 @@
-You will be given vulnerability data from a vulnerability report, which may include a full trace or a high-level description. Follow these steps to determine the validity of the reported cross-site scripting issue:
-
-1. Understand the Report
-Action: Carefully read the vulnerability report to understand the described issue. If the input data includes specific files or code snippets, leverage the "httpsgithub_comfinosTimeBase-CE" toolkit to fetch and review the actual source code. 
-Purpose: Gain full context to verify sanitization, encoding, and code behavior.
-
-2. Identify Input Vectors
+1. Identify Input Vectors
 Action: Pinpoint where user inputs enter the application.
 Common Input Vectors:
  - URL parameters
@@ -14,7 +8,7 @@ Common Input Vectors:
  - API inputs
 Purpose: XSS often stems from unsanitized user input, so identifying these entry points is essential.
 
-3. Identify Output Points
+2. Identify Output Points
 Action: Find where the user input is rendered or outputted in the web page.
 Common Output Points:
  - HTML elements
@@ -23,7 +17,7 @@ Common Output Points:
  - CSS styles
 Purpose: Determine where the input could potentially execute as a script.
 
-4. Check for Sanitization and Encoding
+3. Check for Sanitization and Encoding
 Action: Inspect the code for sanitization or encoding of user inputs before output.
 Indicators of Proper Handling:
  - HTML encoding (e.g., htmlspecialchars in PHP, encodeURIComponent in JavaScript)
@@ -36,14 +30,14 @@ Context-Specific Encoding:
  - CSS: CSS encoding
 Purpose: Confirm the input is handled correctly for its output context.
 
-5. Analyze the Code Flow
+4. Analyze the Code Flow
 Action: Trace the input from its source to the output point.
 Key Questions:
  - Are there filters or validations blocking malicious inputs?
  - Can the input bypass these checks (e.g., via encoding tricks)?
 Method: Follow the data flow to verify if unsanitized input can reach an executable output point.
 
-6. Consider the Context
+5. Consider the Context
  Action: Assess environmental or application-specific factors that might mitigate the issue.
 Examples:
  - Content Security Policy (CSP) headers restricting script execution
@@ -51,7 +45,7 @@ Examples:
  - Input in non-executable contexts (e.g., comments or non-script attributes)
 Caution: These factors may reduce impact but don’t automatically rule out a vulnerability if unsanitized input reaches an executable context.
 
-7. Look for False Positives
+6. Look for False Positives
 Action: Investigate why the report might be incorrect.
 Possible Causes:
  - Scanner misinterpretation of the code
@@ -60,7 +54,7 @@ Possible Causes:
  - Framework handling sanitization automatically
 Verification: Confirm these by reviewing the code and its execution context.
 
-8. Document Findings
+7. Document Findings
 If Valid:
 Description: Explain how XSS occurs (e.g., "An attacker injects a script via a URL parameter rendered directly in the page").
 Suggestions: Recommend fixes like:
