@@ -1,0 +1,70 @@
+1. Identify Input Vectors
+Action: Locate where user inputs enter the application.
+Common Input Vectors:
+ - Form inputs
+ - URL parameters
+ - API inputs
+ - File uploads
+ - Environment variables
+Purpose: Command Injection vulnerabilities typically arise from unsanitized user input, making it essential to identify these entry points.
+
+2. Identify Command Execution Points
+Action: Find where the application executes system commands or interacts with the operating system.
+Common Execution Points: 
+ - exec(), system(), popen() (e.g., in PHP, Python)
+ - Shell command execution in scripts
+ - Process builders (e.g., ProcessBuilder in Java)
+Purpose: Pinpoint where user input could potentially be used to inject malicious commands.
+
+3. Check for Input Sanitization and Validation
+Action: Examine the code for sanitization or validation of user input before it reaches command execution.
+Indicators of Proper Handling:
+ - Whitelisting allowed characters or patterns (e.g., [a-zA-Z0-9])
+ - Escaping shell metacharacters (e.g., &, |, ;)
+ - Using secure APIs (e.g., subprocess.Popen with a list of arguments in Python)
+Purpose: Verify if the input is adequately sanitized to prevent injection of malicious commands.
+
+4. Analyze the Code Flow
+Action: Trace the input from its entry point to the command execution point.
+Key Questions:
+- Are there filters or validations that block malicious inputs?
+ - Can the input bypass these checks (e.g., via concatenation or encoding)?
+Method: Follow the data flow to confirm whether unsanitized input can reach a command execution function.
+
+5. Consider the Context
+Action: Evaluate environmental or application-specific factors that might mitigate the vulnerability.
+Examples:
+ - Limited privileges (e.g., running in a container or as a restricted user)
+ - Hardcoded commands that don’t incorporate user input
+ - Input used as an argument rather than part of the command string
+ - Caution: These factors may lessen the impact but don’t necessarily eliminate the vulnerability if unsanitized input can still influence the command.
+
+6. Look for False Positives
+Action: Investigate reasons the report might be incorrect.
+Possible Causes:
+ - Scanner misinterpretation (e.g., mistaking a variable for user input)
+ - Subtle or non-obvious sanitization
+ - Command execution not involving user input
+ - Input used in a safe context (e.g., as a parameter, not a command)
+Verification: Review the code and execution context to confirm these conditions.
+
+7. Document Findings
+If Valid:
+Description: Explain how Command Injection occurs (e.g., "An attacker can inject commands via a URL parameter passed directly to system()").
+Suggestions:
+ - Use secure APIs (e.g., subprocess.Popen with argument lists)
+ - Implement strict input validation (e.g., whitelist allowed characters)
+ - Avoid direct command execution (e.g., use built-in functions instead)
+
+If False Positive:
+ - Explanation: Detail why the code is safe (e.g., "Input is escaped with escapeshellarg() before use").
+Evidence: Cite specific code or mechanisms preventing exploitation (e.g., "Input is passed as an argument to ProcessBuilder, avoiding shell interpretation").
+
+Additional Guidance
+Language-Specific Checks:
+ - Python: Ensure subprocess calls use argument lists, not strings (e.g., subprocess.Popen(['ls', '-l']) vs. subprocess.Popen('ls -l')).
+ - PHP: Verify escapeshellarg() or escapeshellcmd() is used with exec() or system().
+ - Java: Confirm ProcessBuilder separates commands and arguments (e.g., new ProcessBuilder("cmd", arg)).
+ - Framework Awareness: Check for framework-provided protections or safer command execution methods.
+Context Matters: Distinguish between shell contexts (where metacharacters are interpreted) and direct argument passing (where they aren’t).
+Edge Cases: Consider bypass techniques (e.g., null byte injection, encoding) that might evade sanitization.
