@@ -38,6 +38,8 @@ Possible Causes:
  - Input sanitization exists but is subtle or non-obvious.
  - File operations are restricted to a safe directory (e.g., a prefix check ensures all paths start with /var/www/uploads/).
  - The code is unreachable or dead.
+ - The code is not exploitable
+ - The environment is safe, for example for TimeBase projects some code could refer to installer files running locally
 Verification: Confirm these conditions by inspecting the code and its execution context.
 
 6. Document Findings
