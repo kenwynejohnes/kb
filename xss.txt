@@ -1,0 +1,81 @@
+You will be given vulnerability data from a vulnerability report, which may include a full trace or a high-level description. Follow these steps to determine the validity of the reported cross-site scripting issue:
+
+1. Understand the Report
+Action: Carefully read the vulnerability report to understand the described issue. If the input data includes specific files or code snippets, leverage the "httpsgithub_comfinosTimeBase-CE" toolkit to fetch and review the actual source code. 
+Purpose: Gain full context to verify sanitization, encoding, and code behavior.
+
+2. Identify Input Vectors
+Action: Pinpoint where user inputs enter the application.
+Common Input Vectors:
+ - URL parameters
+ - Form inputs
+ - HTTP headers
+ - Cookies
+ - API inputs
+Purpose: XSS often stems from unsanitized user input, so identifying these entry points is essential.
+
+3. Identify Output Points
+Action: Find where the user input is rendered or outputted in the web page.
+Common Output Points:
+ - HTML elements
+ - HTML attributes
+ - JavaScript code
+ - CSS styles
+Purpose: Determine where the input could potentially execute as a script.
+
+4. Check for Sanitization and Encoding
+Action: Inspect the code for sanitization or encoding of user inputs before output.
+Indicators of Proper Handling:
+ - HTML encoding (e.g., htmlspecialchars in PHP, encodeURIComponent in JavaScript)
+ - Secure functions (e.g., textContent instead of innerHTML)
+ - Framework-specific protections (e.g., React JSX automatic escaping)
+Context-Specific Encoding:
+ - HTML content: HTML encoding
+ - HTML attributes: Attribute encoding
+ - JavaScript: JavaScript encoding
+ - CSS: CSS encoding
+Purpose: Confirm the input is handled correctly for its output context.
+
+5. Analyze the Code Flow
+Action: Trace the input from its source to the output point.
+Key Questions:
+ - Are there filters or validations blocking malicious inputs?
+ - Can the input bypass these checks (e.g., via encoding tricks)?
+Method: Follow the data flow to verify if unsanitized input can reach an executable output point.
+
+6. Consider the Context
+ Action: Assess environmental or application-specific factors that might mitigate the issue.
+Examples:
+ - Content Security Policy (CSP) headers restricting script execution
+ - Frameworks with built-in XSS protection
+ - Input in non-executable contexts (e.g., comments or non-script attributes)
+Caution: These factors may reduce impact but don’t automatically rule out a vulnerability if unsanitized input reaches an executable context.
+
+7. Look for False Positives
+Action: Investigate why the report might be incorrect.
+Possible Causes:
+ - Scanner misinterpretation of the code
+ - Subtle or non-obvious sanitization
+ - Output context preventing script execution
+ - Framework handling sanitization automatically
+Verification: Confirm these by reviewing the code and its execution context.
+
+8. Document Findings
+If Valid:
+Description: Explain how XSS occurs (e.g., "An attacker injects a script via a URL parameter rendered directly in the page").
+Suggestions: Recommend fixes like:
+ - Proper encoding for the context
+ - Using textContent instead of innerHTML
+ - Adding CSP headers
+If False Positive:
+Explanation: Detail why it’s not vulnerable (e.g., "Input is HTML encoded before insertion").
+Evidence: Cite specific code or mechanisms preventing exploitation.
+
+Additional Guidance
+Language-Specific Checks:
+ - PHP: Check for htmlspecialchars or htmlentities with correct flags.
+ - JavaScript: Look for textContent, innerText, or proper encoding.
+ - Java/JSP: Verify <c:out> in JSP or OWASP ESAPI usage.
+ - Framework Awareness: Confirm built-in protections in frameworks like React or Angular.
+ - Stored XSS: For database-stored inputs, ensure sanitization before display.
+ - DOM-based XSS: Watch for client-side issues, e.g., unsanitized location.hash in innerHTML.
