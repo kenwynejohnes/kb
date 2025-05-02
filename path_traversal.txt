@@ -1,0 +1,53 @@
+1. Identify Input Vectors
+Action: Locate where user inputs are used in file operations, such as opening, reading, or writing files.
+Common Input Vectors:
+ - URL parameters
+ - Form inputs
+ - HTTP headers
+ - Cookies
+ - API inputs
+Purpose: Path traversal vulnerabilities typically stem from unsanitized user inputs that influence file paths, so pinpointing these entry points is critical.
+
+2. Check for Sanitization and Validation
+Action: Examine the code to see if user inputs are sanitized or validated before being used in file paths.
+Indicators of Proper Handling:
+ - Removal or encoding of dangerous characters (e.g., "../")
+ - Path normalization (e.g., os.path.normpath() in Python, Paths.get().normalize() in Java)
+ - Whitelisting of allowed directories or files
+ - Use of secure functions that inherently prevent traversal
+Example: In Python, os.path.join(safe_dir, filename) combined with a check to ensure the path stays within safe_dir is a good practice.
+
+3. Analyze the Code Flow
+Action: Trace the user input from its source to the file operation.
+Key Questions:
+ - Are there filters or validations that block malicious inputs?
+ - Can the input bypass these checks (e.g., via encoding tricks or unexpected formats)?
+Method: Follow the data flow to confirm whether unsanitized input can reach a file operation, such as open() or File.read().
+
+4. Consider the Context
+Action: Evaluate environmental or application-specific factors that might mitigate the vulnerability.
+Examples:
+ - The application runs in a container or chroot jail, limiting accessible directories.
+ - File system permissions restrict access to sensitive areas.
+Caution: While these factors may reduce the impact, they do not automatically make the issue a false positive. The code is still vulnerable if it allows path traversal, even with external mitigations.
+
+5. Look for False Positives
+Action: Investigate reasons the report might be incorrect.
+Possible Causes:
+ - The scanner misinterpreted the code.
+ - Input sanitization exists but is subtle or non-obvious.
+ - File operations are restricted to a safe directory (e.g., a prefix check ensures all paths start with /var/www/uploads/).
+ - The code is unreachable or dead.
+Verification: Confirm these conditions by inspecting the code and its execution context.
+
+6. Document Findings
+If Valid:
+Description: Explain how path traversal can occur (e.g., an attacker inputs "../" to access /etc/passwd).
+Suggestions: Recommend fixes, such as:
+ - Adding input validation to reject dangerous characters.
+ - Normalizing paths to eliminate traversal sequences.
+ - Restricting file operations to a predefined directory.
+If False Positive:
+Explanation: Detail why the code is not vulnerable, citing specific mechanisms (e.g., "The code uses realpath() and checks against a safe base directory").
+Evidence: Reference the exact code or logic that prevents exploitation.
+Additional Guidance
